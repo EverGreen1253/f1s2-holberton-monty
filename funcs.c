@@ -48,7 +48,13 @@ char *strtrim(char *s)
         }
 
         i = 0;
-        n = malloc(end - start + 3);
+        n = (char *) malloc(end - start + 3);
+	if (n == NULL)
+	{
+		fprintf(stderr, "Error: malloc failed\n");
+		exit(EXIT_FAILURE);
+	}
+
         while(i < (end - start + 1))
         {
                 n[i] = s[start + i];
@@ -97,7 +103,13 @@ char *remove_internal_spaces(char *s)
                 i++;
         }
 
-        o = malloc(len + 2);
+        o = (char *) malloc(len + 1);
+	if (o == NULL)
+	{
+		free(s);
+		fprintf(stderr, "Error: malloc failed\n");
+		exit(EXIT_FAILURE);
+	}
 
         i = 0;
         found = 0;
@@ -127,7 +139,7 @@ char *remove_internal_spaces(char *s)
 
                 i++;
         }
-        o[j + 1] = '\0';
+        o[j] = '\0';
 
         /* printf("new len - %d\n", len); */
 

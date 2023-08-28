@@ -34,5 +34,6 @@ typedef struct instruction_s
 int iswhitespace(char ch);
 char *strtrim(char *buffer);
 char *remove_internal_spaces(char *o);
+int is_invalid_cmd(char *o);
 
 #endif
