@@ -47,12 +47,13 @@ int main(int ac, char **av)
 
 		free(n);
 
-		run_cmd(fp, line, o, ops, stack);
+		run_cmd(fp, line, o, ops, &stack);
 		free(o);
 
 		s = fgets(buffer, bufsize, fp);
 		line++;
 	}
+	free_list(stack);
 	fclose(fp);
 
 	return (0);
@@ -64,9 +65,9 @@ int main(int ac, char **av)
  *
  * Return: 0 or 1
  */
-void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t *stack)
+void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 {
-	int i = 0;
+	int i = 0, value;
 	char *temp, *cmd;
 
 	if (o != NULL && o[0] == '$')
@@ -81,14 +82,17 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t *stack)
 	temp = strtok(o, "$");
 	cmd = strtok(temp, " ");
 
-	/* printf("cmd is %s\n", cmd); */
+	/* extract push value if cmd is push */
+	value = (cmd[1] == 'u') ? atoi(strtok(NULL, " ")) : line;
+
+	/* printf("cmd to run %s %d\n", cmd, value); */
 
 	while (i < 2)
 	{
 		if (*ops[i].opcode == cmd[1])
 		{
 			/* printf("Running cmd %s\n", cmd); */
-			ops[i].f(&stack, line);
+			ops[i].f(stack, value);
 		}
 		i++;
 	}

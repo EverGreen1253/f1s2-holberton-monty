@@ -13,9 +13,8 @@
  */
 void push(stack_t **head, unsigned int n)
 {
-	printf ("run push function\n");
+	/* printf ("run push function for value %u\n", n); */
 
-	/*
         stack_t *node;
 
         node = malloc(sizeof(stack_t));
@@ -39,7 +38,6 @@ void push(stack_t **head, unsigned int n)
                 (*head)->prev = node;
                 *head = node;
         }
-	*/
 }
 
 /**
@@ -80,7 +78,22 @@ void free_node(stack_t *node)
 
 void pall(stack_t **head, unsigned int n)
 {
-	printf("run pall function\n");
+	/* printf("run pall function\n"); */
 
-	// FIXME:
+	const stack_t *curr;
+	int i = 0;
+
+	/* printf("n - %d\n", (*head)->n); */
+
+	if (head != NULL)
+	{
+
+		curr = *head;
+		while (curr != NULL)
+		{
+			printf("%d\n", curr->n);
+			curr = curr->next;
+			i = i + 1;
+		}
+	}	
 }
