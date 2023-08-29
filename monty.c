@@ -106,8 +106,9 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 	if (strcmp(cmd, "push") == 0)
 	{
 		str_val = strtok(NULL, " ");
-		if ((str_val == NULL) || (strlen(str_val) == 0))
+		if ((str_val == NULL) || (strlen(str_val) == 0) || (is_valid_val(str_val) == 0))
 		{
+			printf("123");
 			if (line > 1)
 			{
 				free_list(*stack);
@@ -147,4 +148,19 @@ int is_valid_cmd(char *c)
 		return (1);
 	}
 	return (0);
+}
+
+int is_valid_val(char *v)
+{
+	int i = 0;
+
+	while (v[i] != '\0')
+	{
+		if ((v[i] <= 48 && v[i] != 45) || v[i] >= 57)
+		{
+			return (0);
+		}
+		i++;
+	}
+	return (1);
 }
