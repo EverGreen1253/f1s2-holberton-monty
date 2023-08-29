@@ -81,7 +81,7 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 
 	if (o != NULL && o[0] == '$')
 	{
-		fprintf(stderr, "L%d: unknown instruction %s", line, o);
+		fprintf(stderr, "L%d: unknown instruction %s\n", line, o);
 		free(o);
 		fclose(fp);
 		exit(EXIT_FAILURE);
@@ -90,11 +90,22 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 	/* extract opcode here from line */
 	temp = strtok(o, "$");
 	cmd = strtok(temp, " ");
+	cmd[strcspn(cmd, "\r\n")] = 0;
+
+	if (is_valid_cmd(cmd) == 0)
+	{
+		fprintf(stderr, "L%d: unknown instruction %s\n", line, o);
+		free(o);
+		fclose(fp);
+		exit(EXIT_FAILURE);
+	}
+
+	/* printf("cmd - %s, strlen - %lu\n", cmd, strlen(cmd)); */
+
 	value = line;
-	if (cmd[1] == 'u')
+	if (strcmp(cmd, "push") == 0)
 	{
 		str_val = strtok(NULL, " ");
-		
 		if ((str_val == NULL) || (strlen(str_val) == 0))
 		{
 			if (line > 1)
@@ -123,3 +134,17 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 	}
 }
 
+/**
+ * is_valid_cmd - does what it says
+ * @c: the cmd to check
+ *
+ * Return: 0 or 1
+ */
+int is_valid_cmd(char *c)
+{
+	if ((strcmp(c, "push") == 0) || (strcmp(c, "pall") == 0))
+	{
+		return (1);
+	}
+	return (0);
+}
