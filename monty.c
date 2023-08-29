@@ -43,25 +43,17 @@ int main(int ac, char **av)
 		n = strtrim(s);
 		// printf("%s", n);
 
-		if (n == NULL)
+		/* empty lines is ok but give errors for empty params */
+
+		if (n != NULL)
 		{
-			if (line > 0)
-			{
-				free_list(stack);
-			}
+			o = remove_internal_spaces(n);
+			printf("%s", o);
 
-			fprintf(stderr, "L%d: usage: push integer\n", line);
-			fclose(fp);
-			exit(EXIT_FAILURE);
+			run_cmd(fp, line, o, ops, &stack);
+			free(n);
+			free(o);
 		}
-
-
-		o = remove_internal_spaces(n);
-		// printf("%s", o);
-
-		run_cmd(fp, line, o, ops, &stack);
-		free(n);
-		free(o);
 
 		s = fgets(buffer, bufsize, fp);
 		line++;
@@ -85,7 +77,7 @@ int main(int ac, char **av)
 void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 {
 	int i = 0, value;
-	char *temp, *cmd;
+	char *temp, *cmd, *str_val;
 
 	if (o != NULL && o[0] == '$')
 	{
@@ -94,14 +86,28 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 		fclose(fp);
 		exit(EXIT_FAILURE);
 	}
+
 	/* extract opcode here from line */
 	temp = strtok(o, "$");
 	cmd = strtok(temp, " ");
-
 	value = line;
 	if (cmd[1] == 'u')
 	{
-		value = atoi(strtok(NULL, " "));
+		str_val = strtok(NULL, " ");
+		
+		if ((str_val == NULL) || (strlen(str_val) == 0))
+		{
+			if (line > 1)
+			{
+				free_list(*stack);
+			}
+
+			fprintf(stderr, "L%d: usage: push integer\n", line);
+			fclose(fp);
+			exit(EXIT_FAILURE);
+		}
+		
+		value = atoi(str_val);
 	}
 
 	/* printf("cmd to run %s %d\n", cmd, value); */
