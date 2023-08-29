@@ -44,4 +44,5 @@ void pall(stack_t **head, unsigned int n);
 int is_valid_cmd(char *c);
 int is_valid_val(char *c);
 
+void err_unknown_instruct(char *o, FILE *fp, int line);
 #endif

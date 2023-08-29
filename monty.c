@@ -68,62 +68,57 @@ int main(int ac, char **av)
 void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 {
 	int i = 0, value;
-	char *temp, *cmd, *str_val;
+	char *temp, *cmd, *val;
 
 	if (o != NULL && o[0] == '$')
-	{
-		fprintf(stderr, "L%d: unknown instruction %s\n", line, o);
-		free(o);
-		fclose(fp);
-		exit(EXIT_FAILURE);
-	}
+		err_unknown_instruct(o, fp, line);
 
-	/* extract opcode here from line */
 	temp = strtok(o, "$");
 	cmd = strtok(temp, " ");
 	cmd[strcspn(cmd, "\r\n")] = 0;
 
 	if (is_valid_cmd(cmd) == 0)
-	{
-		fprintf(stderr, "L%d: unknown instruction %s\n", line, o);
-		free(o);
-		fclose(fp);
-		exit(EXIT_FAILURE);
-	}
-
-	/* printf("cmd - %s, strlen - %lu\n", cmd, strlen(cmd)); */
+		err_unknown_instruct(o, fp, line);
 
 	value = line;
 	if (strcmp(cmd, "push") == 0)
 	{
-		str_val = strtok(NULL, " ");
-		if ((str_val == NULL) || (strlen(str_val) == 0) 
-				|| (is_valid_val(str_val) == 0))
+		val = strtok(NULL, " ");
+		if ((val == NULL) || (strlen(val) == 0) || (is_valid_val(val) == 0))
 		{
 			if (line > 1)
-			{
 				free_list(*stack);
-			}
 
 			fprintf(stderr, "L%d: usage: push integer\n", line);
 			fclose(fp);
 			exit(EXIT_FAILURE);
 		}
-
-		value = atoi(str_val);
+		value = atoi(val);
 	}
-
-	/* printf("cmd to run %s %d\n", cmd, value); */
 
 	while (i < 2)
 	{
 		if (*ops[i].opcode == cmd[1])
-		{
-			/* printf("Running cmd %s\n", cmd); */
 			ops[i].f(stack, value);
-		}
+
 		i++;
 	}
+}
+
+/**
+ * err_unknown_instruct - does what it says
+ * @o: the line
+ * @fp: file pointer
+ * @line: line number
+ *
+ * Return: nothing
+ */
+void err_unknown_instruct(char *o, FILE *fp, int line)
+{
+	fprintf(stderr, "L%d: unknown instruction %s\n", line, o);
+	free(o);
+	fclose(fp);
+	exit(EXIT_FAILURE);
 }
 
 /**
