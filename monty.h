@@ -34,6 +34,12 @@ typedef struct instruction_s
 int iswhitespace(char ch);
 char *strtrim(char *buffer);
 char *remove_internal_spaces(char *o);
-int is_invalid_cmd(char *o);
+int count_valid_cmd_chars(char *s);
+void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t *stack);
+
+void push(stack_t **head, unsigned int n);
+void free_list(stack_t *head);
+void free_node(stack_t *node);
+void pall(stack_t **head, unsigned int n);
 
 #endif

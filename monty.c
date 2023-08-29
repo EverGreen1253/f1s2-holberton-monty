@@ -13,10 +13,16 @@
  */
 int main(int ac, char **av)
 {
+	instruction_t ops[] = {
+		{"u", push}, {"a", pall}
+	};
+	stack_t *stack;
 	FILE *fp = NULL;
-	char *s, *n, *o = NULL, *line_num;
+	char *s, *n, *o = NULL, *line_num, *cmd;
 	int bufsize = 65535, line = 1, invalid = 0;
 	char buffer[bufsize];
+
+	stack = NULL;
 
 	if (ac != 2)
 	{
@@ -25,11 +31,10 @@ int main(int ac, char **av)
 	}
 
 	fp = fopen(av[1], "r");
-
 	if (fp == NULL)
 	{
-                fprintf(stderr, "Error: Can't open file %s\n", av[1]);
-                exit(EXIT_FAILURE);
+		fprintf(stderr, "Error: Can't open file %s\n", av[1]);
+		exit(EXIT_FAILURE);
 	}
 
 	s = fgets(buffer, bufsize, fp);
@@ -38,23 +43,11 @@ int main(int ac, char **av)
 		n = strtrim(s);
 		/* printf("%s", n); */
 		o = remove_internal_spaces(n);
-		printf("%s", o);
+		/* printf("%s", o); */
 
 		free(n);
-		
-		/* Check if command is invalid */
-		invalid = is_invalid_cmd(o);
-		if (invalid)
-		{
-			fprintf(stderr, "L%d: unknown instruction %s", line, o);
-			free(o);
-			fclose(fp);
-			exit(EXIT_FAILURE);
-		}
 
-		/* Run the command here */
-		// FIXME:
-
+		run_cmd(fp, line, o, ops, stack);
 		free(o);
 
 		s = fgets(buffer, bufsize, fp);
@@ -62,15 +55,42 @@ int main(int ac, char **av)
 	}
 	fclose(fp);
 
-	return(0);
+	return (0);
 }
 
-int is_invalid_cmd(char *o)
+/**
+ * run_cmd - run the cmd on the line
+ * @o: the line with the cmd
+ *
+ * Return: 0 or 1
+ */
+void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t *stack)
 {
+	int i = 0;
+	char *temp, *cmd;
+
 	if (o != NULL && o[0] == '$')
 	{
-		return(1);
+		fprintf(stderr, "L%d: unknown instruction %s", line, o);
+		free(o);
+		fclose(fp);
+		exit(EXIT_FAILURE);
 	}
 
-	return(0);
+	/* extract opcode here from line */
+	temp = strtok(o, "$");
+	cmd = strtok(temp, " ");
+
+	/* printf("cmd is %s\n", cmd); */
+
+	while (i < 2)
+	{
+		if (*ops[i].opcode == cmd[1])
+		{
+			/* printf("Running cmd %s\n", cmd); */
+			ops[i].f(&stack, line);
+		}
+		i++;
+	}
 }
+
