@@ -28,10 +28,7 @@ int iswhitespace(char c)
  */
 char *strtrim(char *s)
 {
-	size_t len = strlen(s);
-	size_t start = 0;
-	size_t end = len - 1;
-	size_t i;
+	size_t len = strlen(s), start = 0, end = len - 1, i;
 	char *n;
 
 	if (len == 0)
@@ -40,8 +37,16 @@ char *strtrim(char *s)
 	while (iswhitespace(s[start]))
 		start++;
 
+	/* everything is white space */
+	if (start == len)
+	{
+		return (NULL);
+	}
+
 	while (iswhitespace(s[end]))
 		end--;
+
+	/* printf("start - %lu, end - %lu, len - %lu\n", start, end, len); */
 
 	i = 0;
 	n = (char *) malloc(end - start + 3);
