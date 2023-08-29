@@ -108,7 +108,6 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 		str_val = strtok(NULL, " ");
 		if ((str_val == NULL) || (strlen(str_val) == 0) || (is_valid_val(str_val) == 0))
 		{
-			printf("123");
 			if (line > 1)
 			{
 				free_list(*stack);
