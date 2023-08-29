@@ -149,14 +149,22 @@ int is_valid_cmd(char *c)
 	return (0);
 }
 
+/**
+ * is_valid_val - does what it says
+ * @v: the value to check
+ *
+ * Return: 0 or 1
+ */
 int is_valid_val(char *v)
 {
 	int i = 0;
 
+	v[strcspn(v, "\r\n")] = 0;	
 	while (v[i] != '\0')
 	{
-		if ((v[i] <= 48 && v[i] != 45) || v[i] >= 57)
+		if (!(v[i] == 45 || ((v[i] >= 48) && (v[i] <= 57))))
 		{
+			/* printf("%c", v[i]); */
 			return (0);
 		}
 		i++;
