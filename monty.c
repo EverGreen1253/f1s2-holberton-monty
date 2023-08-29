@@ -18,8 +18,8 @@ int main(int ac, char **av)
 	};
 	stack_t *stack;
 	FILE *fp = NULL;
-	char *s, *n, *o = NULL, *line_num, *cmd;
-	int bufsize = 65535, line = 1, invalid = 0;
+	char *s, *n, *o = NULL;
+	int bufsize = 65535, line = 1;
 	char buffer[bufsize];
 
 	stack = NULL;
@@ -61,7 +61,11 @@ int main(int ac, char **av)
 
 /**
  * run_cmd - run the cmd on the line
+ * @fp: File pointer
+ * @line: the line number of the script being run
  * @o: the line with the cmd
+ * @ops: array for pointer functions
+ * @stack: the stack
  *
  * Return: 0 or 1
  */

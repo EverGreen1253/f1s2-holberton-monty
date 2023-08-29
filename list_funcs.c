@@ -15,29 +15,29 @@ void push(stack_t **head, unsigned int n)
 {
 	/* printf ("run push function for value %u\n", n); */
 
-        stack_t *node;
+	stack_t *node;
 
-        node = malloc(sizeof(stack_t));
-        if (node == NULL)
-        {
-                free_list(*head);
-                exit(98);
-        }
+	node = malloc(sizeof(stack_t));
+	if (node == NULL)
+	{
+		free_list(*head);
+		exit(98);
+	}
 
-        node->n = n;
+	node->n = n;
 
-        if (*head == NULL)
-        {
-                node->next = NULL;
-                node->prev = NULL;
-                *head = node;
-        }
-        else
-        {
-                node->next = *head;
-                (*head)->prev = node;
-                *head = node;
-        }
+	if (*head == NULL)
+	{
+		node->next = NULL;
+		node->prev = NULL;
+		*head = node;
+	}
+	else
+	{
+		node->next = *head;
+		(*head)->prev = node;
+		*head = node;
+	}
 }
 
 /**
@@ -48,17 +48,17 @@ void push(stack_t **head, unsigned int n)
  */
 void free_list(stack_t *head)
 {
-        stack_t *node;
+	stack_t *node;
 
-        if (head != NULL)
-        {
-                node = head;
-                if (node != NULL && node->next != NULL)
-                {
-                        free_node(node->next);
-                }
-                free(head);
-        }
+	if (head != NULL)
+	{
+		node = head;
+		if (node != NULL && node->next != NULL)
+		{
+			free_node(node->next);
+		}
+		free(head);
+	}
 }
 
 /**
@@ -69,13 +69,20 @@ void free_list(stack_t *head)
  */
 void free_node(stack_t *node)
 {
-        if (node->next != NULL)
-        {
-                free_node(node->next);
-        }
-        free(node);
+	if (node->next != NULL)
+	{
+		free_node(node->next);
+	}
+	free(node);
 }
 
+/**
+ * pall - print the values in the stack
+ * @head: head of the list
+ * @n: line number
+ *
+ * Return: nothing
+ */
 void pall(stack_t **head, unsigned int n)
 {
 	/* printf("run pall function\n"); */
@@ -87,7 +94,6 @@ void pall(stack_t **head, unsigned int n)
 
 	if (head != NULL)
 	{
-
 		curr = *head;
 		while (curr != NULL)
 		{
@@ -95,5 +101,5 @@ void pall(stack_t **head, unsigned int n)
 			curr = curr->next;
 			i = i + 1;
 		}
-	}	
+	}
 }
