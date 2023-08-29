@@ -87,6 +87,8 @@ void pall(stack_t **head, unsigned int n)
 {
 	/* printf("run pall function\n"); */
 
+	(void)n;  /* This line indicates that n is intentionally unused */
+
 	const stack_t *curr;
 	int i = 0;
 
