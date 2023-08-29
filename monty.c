@@ -72,7 +72,7 @@ int main(int ac, char **av)
 void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 {
 	int i = 0, value;
-	char *temp, *cmd;
+	char *temp, *cmd, *str_val;
 
 	if (o != NULL && o[0] == '$')
 	{
@@ -86,8 +86,19 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 	temp = strtok(o, "$");
 	cmd = strtok(temp, " ");
 
-	/* extract push value if cmd is push */
-	value = (cmd[1] == 'u') ? atoi(strtok(NULL, " ")) : line;
+	value = line;
+	if (cmd[1] == 'u')
+	{
+		str_val = strtok(NULL, " ");
+		if (str_val == NULL || strlen(str_val) == 0)
+		{
+			fprintf(stderr, "L%d: usage: push integer", line);
+			free(o);
+			fclose(fp);
+			exit(EXIT_FAILURE);
+		}
+		value = atoi(str_val);
+	}
 
 	/* printf("cmd to run %s %d\n", cmd, value); */
 
