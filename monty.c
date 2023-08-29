@@ -48,7 +48,7 @@ int main(int ac, char **av)
 		if (n != NULL)
 		{
 			o = remove_internal_spaces(n);
-			printf("%s", o);
+			// printf("%s", o);
 
 			run_cmd(fp, line, o, ops, &stack);
 			free(n);
