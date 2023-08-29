@@ -13,16 +13,12 @@
  */
 int main(int ac, char **av)
 {
-	instruction_t ops[] = {
-		{"u", push}, {"a", pall}
-	};
-	stack_t *stack;
+	instruction_t ops[] = {{"u", push}, {"a", pall}};
+	stack_t *stack = NULL;
 	FILE *fp = NULL;
 	char *s, *n, *o = NULL;
 	int bufsize = 65535, line = 1;
 	char buffer[bufsize];
-
-	stack = NULL;
 
 	if (ac != 2)
 	{
@@ -41,20 +37,15 @@ int main(int ac, char **av)
 	while (s != NULL)
 	{
 		n = strtrim(s);
-		// printf("%s", n);
-
-		/* empty lines is ok but give errors for empty params */
-
+		/* printf("%s", n); */
 		if (n != NULL)
 		{
 			o = remove_internal_spaces(n);
-			// printf("%s", o);
-
+			/* printf("%s", o); */
 			run_cmd(fp, line, o, ops, &stack);
 			free(n);
 			free(o);
 		}
-
 		s = fgets(buffer, bufsize, fp);
 		line++;
 	}
@@ -106,7 +97,8 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 	if (strcmp(cmd, "push") == 0)
 	{
 		str_val = strtok(NULL, " ");
-		if ((str_val == NULL) || (strlen(str_val) == 0) || (is_valid_val(str_val) == 0))
+		if ((str_val == NULL) || (strlen(str_val) == 0) 
+				|| (is_valid_val(str_val) == 0))
 		{
 			if (line > 1)
 			{
@@ -117,7 +109,7 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 			fclose(fp);
 			exit(EXIT_FAILURE);
 		}
-		
+
 		value = atoi(str_val);
 	}
 
@@ -159,7 +151,7 @@ int is_valid_val(char *v)
 {
 	int i = 0;
 
-	v[strcspn(v, "\r\n")] = 0;	
+	v[strcspn(v, "\r\n")] = 0;
 	while (v[i] != '\0')
 	{
 		if (!(v[i] == 45 || ((v[i] >= 48) && (v[i] <= 57))))
