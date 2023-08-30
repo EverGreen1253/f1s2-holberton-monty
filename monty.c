@@ -13,7 +13,7 @@
  */
 int main(int ac, char **av)
 {
-	instruction_t ops[] = {{"u", push}, {"a", pall}, {"i", pint}};
+	instruction_t ops[] = {{"u", push}, {"a", pall}, {"i", pint}, {"o", pop}};
 	stack_t *stack = NULL;
 	FILE *fp = NULL;
 	char *s, *n, *o = NULL;
@@ -106,7 +106,16 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 		}
 	}
 
-	while (i < 3) /* 3 indicates the num of funcs */
+	if (strcmp(cmd, "pop") == 0)
+	{
+		if (*stack == NULL)
+		{
+			fprintf(stderr, "L%d: can't pop an empty stack\n", line);
+			die(fp, o, stack);
+		}
+	}
+
+	while (i < 4) /* 4 indicates the num of funcs */
 	{
 		if (*ops[i].opcode == cmd[1])
 			ops[i].f(stack, value);
@@ -140,7 +149,7 @@ void die(FILE *fp, char *o, stack_t **stack)
  */
 int is_valid_cmd(char *c)
 {
-	if ((strcmp(c, "push") == 0) || (strcmp(c, "pall") == 0) || (strcmp(c, "pint") == 0))
+	if ((strcmp(c, "push") == 0) || (strcmp(c, "pall") == 0) || (strcmp(c, "pint") == 0) || (strcmp(c, "pop") == 0))
 	{
 		return (1);
 	}
