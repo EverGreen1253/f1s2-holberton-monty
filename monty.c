@@ -53,16 +53,19 @@ int main(int ac, char **av)
 				fprintf(stderr, "L%d: usage: push integer\n", line);
 			}
 
-			if (line > 0)
-			{
-				free_list(stack);
-			}
-
 			free(n);
 			free(o);
 
-			fclose(fp);
-			exit(EXIT_FAILURE);
+			if (result < 0)
+			{
+				if (line > 0)
+				{
+					free_list(stack);
+				}
+
+				fclose(fp);
+				exit(EXIT_FAILURE);
+			}
 
 		}
 		s = fgets(buffer, bufsize, fp);
