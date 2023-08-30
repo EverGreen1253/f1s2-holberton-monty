@@ -13,7 +13,7 @@
  */
 int main(int ac, char **av)
 {
-	instruction_t ops[] = {{"u", push}, {"a", pall}, {"i", pint}, {"o", pop}};
+	instruction_t ops[] = {{"u", push}, {"a", pall}, {"i", pint}, {"o", pop}, {"w", swap}, {"d", add}, {"n", nop}};
 	stack_t *stack = NULL;
 	FILE *fp = NULL;
 	char *s, *n, *o = NULL;
@@ -67,57 +67,38 @@ int main(int ac, char **av)
 void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 {
 	int i = 0, value;
-	char *temp, *cmd, *val;
+	char *temp, *cmd, *val, letter;
 
 	if (o != NULL && o[0] == '$')
-	{
-		fprintf(stderr, "L%d: unknown instruction %s\n", line, o);
-		die(fp, o, stack);
-	}
+		die('0', fp, line, o, stack);
 
 	temp = strtok(o, "$");
 	cmd = strtok(temp, " ");
 	cmd[strcspn(cmd, "\r\n")] = 0;
 
-	if (is_valid_cmd(cmd) == 0)
-	{
-		fprintf(stderr, "L%d: unknown instruction %s\n", line, o);
-		die(fp, o, stack);
-	}
+	letter = is_valid_cmd(cmd);
+	if (letter == '0')
+		die('0', fp, line, o, stack);
 
 	value = line;
-	if (strcmp(cmd, "push") == 0)
+	if (letter == 'u') /* push */
 	{
 		val = strtok(NULL, " ");
 		if ((val == NULL) || (strlen(val) == 0) || (is_valid_val(val) == 0))
-		{
-			fprintf(stderr, "L%d: usage: push integer\n", line);
-			die(fp, o, stack);
-		}
+			die(letter, fp, line, o, stack);
+
 		value = atoi(val);
 	}
 
-	if (strcmp(cmd, "pint") == 0)
-	{
-		if (*stack == NULL)
-		{
-			fprintf(stderr, "L%d: can't pint, stack empty\n", line);
-			die(fp, o, stack);
-		}
-	}
+	if ((*stack == NULL) && ((letter == 'i') || (letter == 'o')))
+		die(letter, fp, line, o, stack);
 
-	if (strcmp(cmd, "pop") == 0)
-	{
-		if (*stack == NULL)
-		{
-			fprintf(stderr, "L%d: can't pop an empty stack\n", line);
-			die(fp, o, stack);
-		}
-	}
+	if (*stack != NULL && (*stack)->next == NULL && line == 1 && ((letter == 'w') || (letter == 'd')))
+		die(letter, fp, line, o, stack);
 
-	while (i < 4) /* 4 indicates the num of funcs */
+	while (i < 7) /* hardcoded num of funcs */
 	{
-		if (*ops[i].opcode == cmd[1])
+		if (*ops[i].opcode == letter)
 			ops[i].f(stack, value);
 
 		i++;
@@ -126,14 +107,34 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 
 /**
  * die - just die
+ * @letter: the letter
  * @fp: file pointer
+ * @line: line number
  * @o: the string for the line
  * @stack: the stack
  *
  * Return: nothing
  */
-void die(FILE *fp, char *o, stack_t **stack)
+void die(char letter, FILE *fp, int line, char *o, stack_t **stack)
 {
+	if (letter == '0')
+		fprintf(stderr, "L%d: unknown instruction %s\n", line, o);
+
+	if (letter == 'u')
+		fprintf(stderr, "L%d: usage: push integer\n", line);
+
+	if (letter == 'i')
+		fprintf(stderr, "L%d: can't pint, stack empty\n", line);
+
+	if (letter == 'o')
+		fprintf(stderr, "L%d: can't pop an empty stack\n", line);
+
+	if (letter == 'w')
+		fprintf(stderr, "L%d: can't swap, stack too short\n", line);
+
+	if (letter == 'd')
+		fprintf(stderr, "L%d: can't add, stack too short\n", line);
+
 	free(o);
 	free_list(*stack);
 
@@ -147,13 +148,30 @@ void die(FILE *fp, char *o, stack_t **stack)
  *
  * Return: 0 or 1
  */
-int is_valid_cmd(char *c)
+char is_valid_cmd(char *c)
 {
-	if ((strcmp(c, "push") == 0) || (strcmp(c, "pall") == 0) || (strcmp(c, "pint") == 0) || (strcmp(c, "pop") == 0))
-	{
-		return (1);
-	}
-	return (0);
+	if (strcmp(c, "push") == 0)
+		return ('u');
+
+	if (strcmp(c, "pall") == 0)
+		return ('a');
+
+	if (strcmp(c, "pint") == 0)
+		return ('i');
+
+	if (strcmp(c, "pop") == 0)
+		return ('o');
+
+	if (strcmp(c, "swap") == 0)
+		return ('w');
+
+	if (strcmp(c, "add") == 0)
+		return ('d');
+
+	if (strcmp(c, "nop") == 0)
+		return ('n');
+
+	return ('0');
 }
 
 /**

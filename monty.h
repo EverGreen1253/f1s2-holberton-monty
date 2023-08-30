@@ -43,9 +43,12 @@ void free_node(stack_t *node);
 void pall(stack_t **head, unsigned int n);
 void pint(stack_t **head, unsigned int n);
 void pop(stack_t **head, unsigned int n);
-int is_valid_cmd(char *c);
+void swap(stack_t **head, unsigned int n);
+void add(stack_t **head, unsigned int n);
+void nop(stack_t **head, unsigned int n);
+char is_valid_cmd(char *c);
 int is_valid_val(char *c);
 
-void die(FILE *fp, char *o, stack_t **stack);
+void die(char letter, FILE *fp, int line, char *o, stack_t **stack);
 
 #endif

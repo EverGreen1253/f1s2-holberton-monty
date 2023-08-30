@@ -128,28 +128,3 @@ void pint(stack_t **head, unsigned int n)
 	}
 }
 
-/**
- * pop - pop the top item in the stack
- * @head: head of list
- * @n: unused
- *
- * Return: nothing
- */
-void pop(stack_t **head, unsigned int n)
-{
-	(void)n;
-
-	stack_t *curr;
-
-	curr = *head;
-
-	if (curr->next != NULL)
-	{
-		*head = curr->next;
-		(*head)->prev = NULL;
-	}
-	else
-		*head = NULL;
-
-	free(curr);
-}
