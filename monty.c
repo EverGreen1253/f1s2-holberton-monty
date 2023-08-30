@@ -99,7 +99,7 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 
 	if (strcmp(cmd, "pint") == 0)
 	{
-		if (stack == NULL)
+		if (*stack == NULL)
 		{
 			fprintf(stderr, "L%d: can't pint, stack empty\n", line);
 			die(fp, o, stack);
