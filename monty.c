@@ -38,34 +38,13 @@ int main(int ac, char **av)
 	while (s != NULL)
 	{
 		n = strtrim(s);
-		/* printf("%s", n); */
 		if (n != NULL)
 		{
 			o = remove_internal_spaces(n);
-			/* printf("%s", o); */
-			result = run_cmd(line, o, ops, &stack);
-			if (result == -1)
-			{
-				fprintf(stderr, "L%d: unknown instruction %s\n", line, o);
-			}
-			else if (result == -2)
-			{
-				fprintf(stderr, "L%d: usage: push integer\n", line);
-			}
-
 			free(n);
+			run_cmd(fp, line, o, ops, &stack);
+
 			free(o);
-
-			if (result < 0)
-			{
-				if (line > 0)
-				{
-					free_list(stack);
-				}
-
-				fclose(fp);
-				exit(EXIT_FAILURE);
-			}
 
 		}
 		s = fgets(buffer, bufsize, fp);
@@ -79,20 +58,23 @@ int main(int ac, char **av)
 
 /**
  * run_cmd - run the cmd on the line
+ * @fp: file pointer
  * @line: the line number of the script being run
  * @o: the line with the cmd
  * @ops: array for pointer functions
+ * @stack: the stack
  *
- * Return: 0 or -1 or -2
+ * Return: nothing
  */
-int run_cmd(int line, char *o, instruction_t *ops, stack_t **stack)
+void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 {
 	int i = 0, value;
 	char *temp, *cmd, *val;
 
 	if (o != NULL && o[0] == '$')
 	{
-		return (-1);
+		fprintf(stderr, "L%d: unknown instruction %s\n", line, o);
+		die(fp, o, line, stack);
 	}
 
 	temp = strtok(o, "$");
@@ -101,7 +83,8 @@ int run_cmd(int line, char *o, instruction_t *ops, stack_t **stack)
 
 	if (is_valid_cmd(cmd) == 0)
 	{
-		return (-1);
+		fprintf(stderr, "L%d: unknown instruction %s\n", line, o);
+		die(fp, o, line, stack);
 	}
 
 	value = line;
@@ -110,7 +93,8 @@ int run_cmd(int line, char *o, instruction_t *ops, stack_t **stack)
 		val = strtok(NULL, " ");
 		if ((val == NULL) || (strlen(val) == 0) || (is_valid_val(val) == 0))
 		{
-			return (-2);
+			fprintf(stderr, "L%d: usage: push integer\n", line);
+			die(fp, o, line, stack);
 		}
 		value = atoi(val);
 	}
@@ -122,8 +106,15 @@ int run_cmd(int line, char *o, instruction_t *ops, stack_t **stack)
 
 		i++;
 	}
+}
 
-	return (0);
+void die(FILE *fp, char*o, int line, stack_t **stack)
+{
+	free(o);
+	free_list(*stack);
+
+	fclose(fp);
+	exit(EXIT_FAILURE);
 }
 
 /**
