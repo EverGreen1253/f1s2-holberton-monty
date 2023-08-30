@@ -13,7 +13,10 @@
  */
 int main(int ac, char **av)
 {
-	instruction_t ops[] = {{"u", push}, {"a", pall}, {"i", pint}, {"o", pop}, {"w", swap}, {"d", add}, {"n", nop}};
+	instruction_t ops[] = {
+		{"u", push}, {"a", pall}, {"i", pint}, {"o", pop},
+		{"w", swap}, {"d", add}, {"n", nop}
+	};
 	stack_t *stack = NULL;
 	FILE *fp = NULL;
 	char *s, *n, *o = NULL;
@@ -42,7 +45,6 @@ int main(int ac, char **av)
 			o = remove_internal_spaces(n);
 			free(n);
 			run_cmd(fp, line, o, ops, &stack);
-
 			free(o);
 		}
 		s = fgets(buffer, bufsize, fp);
@@ -50,7 +52,6 @@ int main(int ac, char **av)
 	}
 	free_list(stack);
 	fclose(fp);
-
 	return (0);
 }
 
@@ -93,7 +94,8 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 	if ((*stack == NULL) && ((letter == 'i') || (letter == 'o')))
 		die(letter, fp, line, o, stack);
 
-	if ((*stack == NULL || (*stack)->next == NULL) && line <= 2 && ((letter == 'w') || (letter == 'd')))
+	if ((*stack == NULL || (*stack)->next == NULL) &&
+		line <= 2 && ((letter == 'w') || (letter == 'd')))
 		die(letter, fp, line, o, stack);
 
 	while (i < 7) /* hardcoded num of funcs */
