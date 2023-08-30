@@ -33,7 +33,6 @@ int main(int ac, char **av)
 		exit(EXIT_FAILURE);
 	}
 
-	result = 0;
 	s = fgets(buffer, bufsize, fp);
 	while (s != NULL)
 	{
@@ -73,7 +72,7 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 	if (o != NULL && o[0] == '$')
 	{
 		fprintf(stderr, "L%d: unknown instruction %s\n", line, o);
-		die(fp, o, line, stack);
+		die(fp, o, stack);
 	}
 
 	temp = strtok(o, "$");
@@ -83,7 +82,7 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 	if (is_valid_cmd(cmd) == 0)
 	{
 		fprintf(stderr, "L%d: unknown instruction %s\n", line, o);
-		die(fp, o, line, stack);
+		die(fp, o, stack);
 	}
 
 	value = line;
@@ -93,7 +92,7 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 		if ((val == NULL) || (strlen(val) == 0) || (is_valid_val(val) == 0))
 		{
 			fprintf(stderr, "L%d: usage: push integer\n", line);
-			die(fp, o, line, stack);
+			die(fp, o, stack);
 		}
 		value = atoi(val);
 	}
@@ -111,12 +110,11 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
  * die - just die
  * @fp: file pointer
  * @o: the string for the line
- * @line: line num
  * @stack: the stack
  *
  * Return: nothing
  */
-void die(FILE *fp, char *o, int line, stack_t **stack)
+void die(FILE *fp, char *o, stack_t **stack)
 {
 	free(o);
 	free_list(*stack);

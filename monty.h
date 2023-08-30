@@ -44,6 +44,6 @@ void pall(stack_t **head, unsigned int n);
 int is_valid_cmd(char *c);
 int is_valid_val(char *c);
 
-void die(FILE *fp, char *o, int line, stack_t **stack);
+void die(FILE *fp, char *o, stack_t **stack);
 
 #endif
