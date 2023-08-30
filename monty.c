@@ -43,7 +43,7 @@ int main(int ac, char **av)
 		{
 			o = remove_internal_spaces(n);
 			/* printf("%s", o); */
-			result = run_cmd(fp, line, o, ops, &stack);
+			result = run_cmd(line, o, ops, &stack);
 			if (result == -1)
 			{
 				fprintf(stderr, "L%d: unknown instruction %s\n", line, o);
@@ -79,15 +79,13 @@ int main(int ac, char **av)
 
 /**
  * run_cmd - run the cmd on the line
- * @fp: File pointer
  * @line: the line number of the script being run
  * @o: the line with the cmd
  * @ops: array for pointer functions
- * @stack: the stack
  *
  * Return: 0 or -1 or -2
  */
-int run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
+int run_cmd(int line, char *o, instruction_t *ops, stack_t **stack)
 {
 	int i = 0, value;
 	char *temp, *cmd, *val;

@@ -35,7 +35,7 @@ int iswhitespace(char ch);
 char *strtrim(char *buffer);
 char *remove_internal_spaces(char *o);
 int count_valid_cmd_chars(char *s);
-int run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack);
+int run_cmd(int line, char *o, instruction_t *ops, stack_t **stack);
 
 void push(stack_t **head, unsigned int n);
 void free_list(stack_t *head);
