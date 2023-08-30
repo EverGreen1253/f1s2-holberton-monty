@@ -105,3 +105,18 @@ void pall(stack_t **head, unsigned int n)
 		}
 	}
 }
+
+void pint(stack_t **head, unsigned int n)
+{
+	/* printf("run pint function\n"); */
+
+	(void)n;
+
+	const stack_t *curr;
+
+	if (head != NULL)
+	{
+		curr = *head;
+		printf("%d\n", curr->n);
+	}
+}

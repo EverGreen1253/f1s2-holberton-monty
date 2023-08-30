@@ -41,6 +41,7 @@ void push(stack_t **head, unsigned int n);
 void free_list(stack_t *head);
 void free_node(stack_t *node);
 void pall(stack_t **head, unsigned int n);
+void pint(stack_t **head, unsigned int n);
 int is_valid_cmd(char *c);
 int is_valid_val(char *c);
 
