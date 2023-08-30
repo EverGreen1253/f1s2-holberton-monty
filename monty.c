@@ -17,7 +17,7 @@ int main(int ac, char **av)
 	stack_t *stack = NULL;
 	FILE *fp = NULL;
 	char *s, *n, *o = NULL;
-	int bufsize = 65535, line = 1;
+	int bufsize = 65535, line = 1, result = 0;
 	char buffer[bufsize];
 
 	if (ac != 2)
@@ -33,6 +33,7 @@ int main(int ac, char **av)
 		exit(EXIT_FAILURE);
 	}
 
+	result = 0;
 	s = fgets(buffer, bufsize, fp);
 	while (s != NULL)
 	{
@@ -42,9 +43,27 @@ int main(int ac, char **av)
 		{
 			o = remove_internal_spaces(n);
 			/* printf("%s", o); */
-			run_cmd(fp, line, o, ops, &stack);
+			result = run_cmd(fp, line, o, ops, &stack);
+			if (result == -1)
+			{
+				fprintf(stderr, "L%d: unknown instruction %s\n", line, o);
+			}
+			else if (result == -2)
+			{
+				fprintf(stderr, "L%d: usage: push integer\n", line);
+			}
+
+			if (line > 0)
+			{
+				free_list(stack);
+			}
+
 			free(n);
 			free(o);
+
+			fclose(fp);
+			exit(EXIT_FAILURE);
+
 		}
 		s = fgets(buffer, bufsize, fp);
 		line++;
@@ -63,22 +82,26 @@ int main(int ac, char **av)
  * @ops: array for pointer functions
  * @stack: the stack
  *
- * Return: 0 or 1
+ * Return: 0 or -1 or -2
  */
-void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
+int run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 {
 	int i = 0, value;
 	char *temp, *cmd, *val;
 
 	if (o != NULL && o[0] == '$')
-		err_unknown_instruct(o, fp, line);
+	{
+		return (-1);
+	}
 
 	temp = strtok(o, "$");
 	cmd = strtok(temp, " ");
 	cmd[strcspn(cmd, "\r\n")] = 0;
 
 	if (is_valid_cmd(cmd) == 0)
-		err_unknown_instruct(o, fp, line);
+	{
+		return (-1);
+	}
 
 	value = line;
 	if (strcmp(cmd, "push") == 0)
@@ -86,12 +109,7 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 		val = strtok(NULL, " ");
 		if ((val == NULL) || (strlen(val) == 0) || (is_valid_val(val) == 0))
 		{
-			if (line > 1)
-				free_list(*stack);
-
-			fprintf(stderr, "L%d: usage: push integer\n", line);
-			fclose(fp);
-			exit(EXIT_FAILURE);
+			return (-2);
 		}
 		value = atoi(val);
 	}
@@ -103,22 +121,8 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 
 		i++;
 	}
-}
 
-/**
- * err_unknown_instruct - does what it says
- * @o: the line
- * @fp: file pointer
- * @line: line number
- *
- * Return: nothing
- */
-void err_unknown_instruct(char *o, FILE *fp, int line)
-{
-	fprintf(stderr, "L%d: unknown instruction %s\n", line, o);
-	free(o);
-	fclose(fp);
-	exit(EXIT_FAILURE);
+	return (0);
 }
 
 /**
