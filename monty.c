@@ -17,7 +17,7 @@ int main(int ac, char **av)
 	stack_t *stack = NULL;
 	FILE *fp = NULL;
 	char *s, *n, *o = NULL;
-	int bufsize = 65535, line = 1, result = 0;
+	int bufsize = 65535, line = 1;
 	char buffer[bufsize];
 
 	if (ac != 2)
@@ -45,7 +45,6 @@ int main(int ac, char **av)
 			run_cmd(fp, line, o, ops, &stack);
 
 			free(o);
-
 		}
 		s = fgets(buffer, bufsize, fp);
 		line++;
@@ -108,7 +107,16 @@ void run_cmd(FILE *fp, int line, char *o, instruction_t *ops, stack_t **stack)
 	}
 }
 
-void die(FILE *fp, char*o, int line, stack_t **stack)
+/**
+ * die - just die
+ * @fp: file pointer
+ * @o: the string for the line
+ * @line: line num
+ * @stack: the stack
+ *
+ * Return: nothing
+ */
+void die(FILE *fp, char *o, int line, stack_t **stack)
 {
 	free(o);
 	free_list(*stack);
