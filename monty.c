@@ -42,9 +42,9 @@ int main(int ac, char **av)
 		n = strtrim(s);
 		if (n != NULL)
 		{
-			o = remove_internal_spaces(n);
-			free(n);
-			run_cmd(fp, line, o, ops, &stack);
+			// o = remove_internal_spaces(n);
+			// free(n);
+			run_cmd(fp, line, n, ops, &stack);
 			free(o);
 		}
 		s = fgets(buffer, bufsize, fp);
